@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>k-drag</title>
+    <script src="./externals/drag.js"></script>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        #container{
+            position: relative;
+            margin: 200px auto;
+            max-width: 640px;
+            height: 700px ;
+            border:2px solid #1890ff;
+            overflow: auto;
+        }
+        #box{
+            position: relative;
+            width:100px;
+            height: 100px;
+            background: lightpink;
+        }
+        .scroll-box{
+            height: 1920px;
+            background:lightskyblue;
+        }
+        #drag-icon{
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            width: 16px;
+            height: 16px;
+            background: url(./img/resize.png);
+            background-repeat: no-repeat;
+        }
+        #drag-icon:hover{
+            cursor: nwse-resize;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="scroll-box">
+            <div id="box">
+                <span id="drag-icon"></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        const container = document.getElementById('container')
+        const box = document.getElementById('box')
+        const icon = document.getElementById('drag-icon')
+        drag(box,box,container)
+        resize(box,icon)
+    </script>
+</body>
+</html>
