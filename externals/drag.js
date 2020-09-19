@@ -58,26 +58,27 @@ const getType = (obj,_type) =>{
 }; 
 
 const drag = (el, triggerEl, limitBox) => {
-    const {
-        clientHeight,
-        clientWidth,
-    } = el;
-    const {
-        clientWidth: boxWidth,
-        clientHeight: boxHeight,
-        scrollHeight,
-        scrollWidth,
-    } = limitBox;
-
-    const minLeft = 0;
-    const minTop = 0;
-    const maxLeft = (scrollWidth || boxWidth ) - clientWidth;
-    const maxTop = (scrollHeight || boxHeight) - clientHeight;
 
     el.style.position = "absolute";
     triggerEl.style.cursor = "move";
 
     const _el_cb = (ev) => {
+        const {
+            clientHeight,
+            clientWidth,
+        } = el;
+        const {
+            clientWidth: boxWidth,
+            clientHeight: boxHeight,
+            scrollHeight,
+            scrollWidth,
+        } = limitBox;
+    
+        const minLeft = 0;
+        const minTop = 0;
+        const maxLeft = (scrollWidth || boxWidth ) - clientWidth;
+        const maxTop = (scrollHeight || boxHeight) - clientHeight;
+
         const e = ev || window.event;
         const posLeft = e.clientX - el.offsetLeft;
         const posTop = e.clientY - el.offsetTop;
