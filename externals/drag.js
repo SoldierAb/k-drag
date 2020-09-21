@@ -1,21 +1,21 @@
-class Event{
+class Event {
 
-    static add(t,eventName,cb){
-        if(window.addEventListener){
-            t.addEventListener(eventName,cb,false);
-        }else if(window.attachEvent){
-            t.attachEvent(`on${eventName}`,cb);
-        }else{
+    static add(t, eventName, cb) {
+        if (window.addEventListener) {
+            t.addEventListener(eventName, cb, false);
+        } else if (window.attachEvent) {
+            t.attachEvent(`on${eventName}`, cb);
+        } else {
             t[`on${eventName}`] = cb;
         }
     }
 
-    static del(t,eventName,cb){
-        if(window.removeEventListener){
-            t.removeEventListener(eventName,cb,false);
-        }else if(window.detachEvent){
-            t.detachEvent(`on${eventName}`,cb);
-        }else{
+    static del(t, eventName, cb) {
+        if (window.removeEventListener) {
+            t.removeEventListener(eventName, cb, false);
+        } else if (window.detachEvent) {
+            t.detachEvent(`on${eventName}`, cb);
+        } else {
             t[`on${eventName}`] = null;
         }
     }
@@ -23,41 +23,44 @@ class Event{
 }
 
 
-const throttle =  (func,delay)=>{
+const throttle = (func, delay) => {
     let timer = null;
-    if(!func) return;
-    if(!getType(func,'Function')){
+    if (!func) return;
+    if (!getType(func, 'Function')) {
         throw new Error(`the 1st param must be a Function at throttleUtil`);
     }
-    if(!delay)  delay=300;                       //默认时间间隔300毫秒
+    if (!delay) delay = 300; //默认时间间隔300毫秒
     let startTime = Date.now();
-    return function(){
+    return function () {
         // eslint-disable-next-line no-undef
-        let ctx=this,args=arguments;
+        let ctx = this,
+            args = arguments;
         let curTime = Date.now();
-        let remaining = delay-(curTime-startTime);
+        let remaining = delay - (curTime - startTime);
         clearTimeout(timer);
-        if(remaining<=0){
-            func.apply(ctx,args);
+        if (remaining <= 0) {
+            func.apply(ctx, args);
             startTime = Date.now();
-        }else{
-            timer = setTimeout(()=>{
-                func.apply(ctx,args);
-            },remaining);
+        } else {
+            timer = setTimeout(() => {
+                func.apply(ctx, args);
+            }, remaining);
         }
     };
 };
 
 
 
-const getType = (obj,_type) =>{
-    if( Object.prototype.toString.call(_type)!==`[object String]`){
+const getType = (obj, _type) => {
+    if (Object.prototype.toString.call(_type) !== `[object String]`) {
         throw new Error(' _type must be String at getType');
     }
-    return Object.prototype.toString.call(obj)===`[object ${_type.substr(0,1).toUpperCase()}${_type.substr(1).toLowerCase()}]`;
-}; 
+    return Object.prototype.toString.call(obj) === `[object ${_type.substr(0,1).toUpperCase()}${_type.substr(1).toLowerCase()}]`;
+};
 
-const drag = (el, triggerEl, limitBox) => {
+const drag = ({
+    el, triggerEl, limitBox
+}) => {
 
     el.style.position = "absolute";
     triggerEl.style.cursor = "move";
@@ -73,10 +76,10 @@ const drag = (el, triggerEl, limitBox) => {
             scrollHeight,
             scrollWidth,
         } = limitBox;
-    
+
         const minLeft = 0;
         const minTop = 0;
-        const maxLeft = (scrollWidth || boxWidth ) - clientWidth;
+        const maxLeft = (scrollWidth || boxWidth) - clientWidth;
         const maxTop = (scrollHeight || boxHeight) - clientHeight;
 
         const e = ev || window.event;
@@ -111,33 +114,53 @@ const drag = (el, triggerEl, limitBox) => {
 
 
 
-const resize = (el, triggerEl, minWidth = 100, minHeight =100 )=>{
-    
+const resize = ({
+    el,
+    triggerEl,
+    limitBox,
+    minWidth = 100,
+    minHeight = 100
+}) => {
+
     triggerEl.style.cursor = "nwse-resize";
-    
+
     const _el_cb = (ev) => {
- 
+
         const {
+            offsetLeft,
+            offsetTop,
             clientHeight,
             clientWidth,
         } = el;
-        
-        let curWidth,curHeight;
+
+        const {
+            clientWidth: boxWidth,
+            clientHeight: boxHeight,
+            scrollHeight,
+            scrollWidth,
+        } = limitBox;
+
+        const maxWidth = (scrollWidth || boxWidth) - offsetLeft
+        const maxHeight = (scrollHeight || boxHeight) - offsetTop
+
+        let curWidth, curHeight;
+
         const e = ev || window.event;
         const posLeft = e.clientX;
         const posTop = e.clientY;
-        
+
+
         const _resize_cb = throttle((event) => {
             const _e = event || window.event;
             const disX = _e.clientX - posLeft;
             const disY = _e.clientY - posTop;
-            curWidth = clientWidth+ disX
+            curWidth = clientWidth + disX
             curHeight = clientHeight + disY
-            curWidth = curWidth > minWidth ? curWidth : minWidth 
-            curHeight = curHeight > minHeight ? curHeight: minHeight
+            curWidth = curWidth <= minWidth ? minWidth : curWidth <= maxWidth ? curWidth : maxWidth
+            curHeight = curHeight <= minHeight ? minHeight : curHeight <= maxHeight ? curHeight : maxHeight
             el.style.width = `${curWidth}px`;
             el.style.height = `${curHeight}px`;
-        },80);
+        }, 80);
 
         const _del_move = () => {
             Event.del(document, "mousemove", _resize_cb);

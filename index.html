@@ -51,11 +51,19 @@
         </div>
     </div>
     <script>
-        const container = document.getElementById('container')
-        const box = document.getElementById('box')
-        const icon = document.getElementById('drag-icon')
-        drag(box,box,container)
-        resize(box,icon)
+        const limitBox = document.getElementById('container')
+        const el = document.getElementById('box')
+        const triggerEl = document.getElementById('drag-icon')
+        drag({
+            el, 
+            triggerEl: el,
+            limitBox
+        })
+        resize({
+            el, 
+            triggerEl,
+            limitBox
+        })
     </script>
 </body>
 </html>
